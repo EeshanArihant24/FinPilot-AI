@@ -1,0 +1,6 @@
+com/finpilot/banking/BankingServiceApplication.class
+com/finpilot/banking/service/AIService.class
+com/finpilot/banking/dto/PredictionResponse.class
+com/finpilot/banking/dto/PredictionRequest.class
+com/finpilot/banking/controller/TestAIController.class
+com/finpilot/banking/controller/HelloController.class
