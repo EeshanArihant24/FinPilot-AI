@@ -1,6 +1,10 @@
 /home/cdac/FinPilot-AI/banking-service/src/main/java/com/finpilot/banking/BankingServiceApplication.java
+/home/cdac/FinPilot-AI/banking-service/src/main/java/com/finpilot/banking/controller/AccountController.java
 /home/cdac/FinPilot-AI/banking-service/src/main/java/com/finpilot/banking/controller/HelloController.java
 /home/cdac/FinPilot-AI/banking-service/src/main/java/com/finpilot/banking/controller/TestAIController.java
 /home/cdac/FinPilot-AI/banking-service/src/main/java/com/finpilot/banking/dto/PredictionRequest.java
 /home/cdac/FinPilot-AI/banking-service/src/main/java/com/finpilot/banking/dto/PredictionResponse.java
+/home/cdac/FinPilot-AI/banking-service/src/main/java/com/finpilot/banking/entity/Account.java
+/home/cdac/FinPilot-AI/banking-service/src/main/java/com/finpilot/banking/repository/AccountRepository.java
 /home/cdac/FinPilot-AI/banking-service/src/main/java/com/finpilot/banking/service/AIService.java
+/home/cdac/FinPilot-AI/banking-service/src/main/java/com/finpilot/banking/service/AccountService.java
