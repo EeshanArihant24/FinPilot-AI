@@ -14,4 +14,11 @@ __pycache__/
 .DS_Store
 
 # Logs
+*.logtarget/
+__pycache__/
+*.pyc
+venv/
+node_modules/
+.idea/
+.vscode/
 *.log
