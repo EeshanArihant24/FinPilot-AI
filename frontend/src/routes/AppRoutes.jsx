@@ -1,4 +1,4 @@
-import { BrowserRouter,Routes,Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 import Dashboard from "../pages/Dashboard/Dashboard";
 import Wallet from "../pages/Banking/Wallet";
@@ -7,30 +7,92 @@ import Transactions from "../pages/Banking/Transactions";
 import FraudDetection from "../pages/AI/FraudDetection";
 import PredictionHistory from "../pages/AI/PredictionHistory";
 
-export default function AppRoutes(){
+import Login from "../pages/login/Login";
+import Register from "../pages/login/Register";
 
-return(
+import PrivateRoute from "./PrivateRoute";
 
-<BrowserRouter>
+export default function AppRoutes() {
 
-<Routes>
+    return (
 
-<Route path="/" element={<Dashboard/>}/>
+        <BrowserRouter>
 
-<Route path="/wallet" element={<Wallet/>}/>
+            <Routes>
 
-<Route path="/transfer" element={<Transfer/>}/>
+                <Route path="/login" element={<Login />} />
 
-<Route path="/transactions" element={<Transactions/>}/>
+                <Route path="/register" element={<Register />} />
 
-<Route path="/fraud" element={<FraudDetection/>}/>
+                <Route
+                    path="/"
+                    element={
+                        <PrivateRoute>
+                            <Dashboard />
+                        </PrivateRoute>
+                    }
+                />
 
-<Route path="/history" element={<PredictionHistory/>}/>
+                <Route
+                    path="/wallet"
+                    element={
+                        <PrivateRoute>
+                            <Wallet />
+                        </PrivateRoute>
+                    }
+                />
 
-</Routes>
+                <Route
+                    path="/transfer"
+                    element={
+                        <PrivateRoute>
+                            <Transfer />
+                        </PrivateRoute>
+                    }
+                />
 
-</BrowserRouter>
+                <Route
+                    path="/transactions"
+                    element={
+                        <PrivateRoute>
+                            <Transactions />
+                        </PrivateRoute>
+                    }
+                />
 
-)
+                <Route
+                    path="/fraud"
+                    element={
+                        <PrivateRoute>
+                            <FraudDetection />
+                        </PrivateRoute>
+                    }
+                />
+
+                <Route
+                    path="/history"
+                    element={
+                        <PrivateRoute>
+                            <PredictionHistory />
+                        </PrivateRoute>
+                    }
+
+                    
+                />
+
+                <Route
+  path="/"
+  element={
+    <PrivateRoute>
+      <Dashboard />
+    </PrivateRoute>
+  }
+/>
+
+            </Routes>
+
+        </BrowserRouter>
+
+    );
 
 }

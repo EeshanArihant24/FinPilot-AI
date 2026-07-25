@@ -1,61 +1,78 @@
 import { createContext, useContext, useEffect, useState } from "react";
-import {
-  login as loginService,
-  logout as logoutService,
-  getCurrentUser,
-} from "../services/authService";
+import authService from "../services/authService";
 
 const AuthContext = createContext();
 
 export function AuthProvider({ children }) {
-  const [user, setUser] = useState(null);
 
-  const [loading, setLoading] = useState(true);
+    const [user, setUser] = useState(null);
+    const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    loadUser();
-  }, []);
+    useEffect(() => {
+        loadUser();
+    }, []);
 
-  const loadUser = async () => {
-    try {
-      const data = await getCurrentUser();
+    const loadUser = async () => {
 
-      setUser(data);
-    } catch (err) {
-      setUser(null);
-    } finally {
-      setLoading(false);
-    }
-  };
+        try {
 
-  const login = async (credentials) => {
-    const data = await loginService(credentials);
+            if (!authService.isLoggedIn()) {
+                setUser(null);
+                return;
+            }
 
-    await loadUser();
+            const currentUser = await authService.getCurrentUser();
 
-    return data;
-  };
+            setUser(currentUser);
 
-  const logout = () => {
-    logoutService();
-    setUser(null);
-  };
+        } catch (err) {
 
-  return (
-    <AuthContext.Provider
-      value={{
-        user,
-        loading,
-        login,
-        logout,
-        isAuthenticated: !!user,
-      }}
-    >
-      {children}
-    </AuthContext.Provider>
-  );
+            console.error(err);
+            authService.logout();
+            setUser(null);
+
+        } finally {
+
+            setLoading(false);
+
+        }
+
+    };
+
+    const login = async (email, password) => {
+
+        await authService.login(email, password);
+
+        const currentUser = await authService.getCurrentUser();
+
+        setUser(currentUser);
+
+    };
+
+    const logout = () => {
+
+        authService.logout();
+
+        setUser(null);
+
+    };
+
+    return (
+
+        <AuthContext.Provider
+            value={{
+                user,
+                loading,
+                login,
+                logout,
+                isAuthenticated: !!user,
+            }}
+        >
+            {children}
+        </AuthContext.Provider>
+
+    );
+
 }
 
-export const useAuthContext = () => {
-  return useContext(AuthContext);
-};
+export const useAuthContext = () => useContext(AuthContext);

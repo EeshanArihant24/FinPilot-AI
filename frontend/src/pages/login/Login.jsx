@@ -1,77 +1,107 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import authService from "../../services/authService";
 
 export default function Login() {
-  const navigate = useNavigate();
 
-  const [form, setForm] = useState({
-    email: "",
-    password: "",
-  });
+    const navigate = useNavigate();
 
-  const handleChange = (e) => {
-    setForm({
-      ...form,
-      [e.target.name]: e.target.value,
-    });
-  };
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+    const [loading, setLoading] = useState(false);
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+    const handleSubmit = async (e) => {
 
-    if (
-      form.email === "admin@gmail.com" &&
-      form.password === "123456"
-    ) {
-      alert("Login Successful");
-      navigate("/dashboard"); // Redirect
-    } else {
-      alert("Invalid Email or Password");
-    }
-  };
+        e.preventDefault();
 
-  return (
-    <div className="min-h-screen bg-gradient-to-r from-blue-600 to-indigo-700 flex justify-center items-center">
-      <form
-        onSubmit={handleSubmit}
-        className="bg-white p-8 rounded-xl shadow-xl w-full max-w-md"
-      >
-        <h1 className="text-3xl font-bold text-center mb-8">
-          Login
-        </h1>
+        try {
 
-        <input
-          type="email"
-          name="email"
-          placeholder="Email"
-          value={form.email}
-          onChange={handleChange}
-          className="border w-full p-3 mb-5 rounded-lg"
-        />
+            setLoading(true);
 
-        <input
-          type="password"
-          name="password"
-          placeholder="Password"
-          value={form.password}
-          onChange={handleChange}
-          className="border w-full p-3 mb-5 rounded-lg"
-        />
+            await authService.login(email, password);
 
-        <button
-          type="submit"
-          className="w-full bg-blue-600 text-white py-3 rounded-lg"
-        >
-          Login
-        </button>
+            navigate("/");
 
-        <p className="mt-5 text-center">
-          Don't have an account?
-          <Link to="/register" className="text-blue-600 ml-2">
-            Register
-          </Link>
-        </p>
-      </form>
-    </div>
-  );
+        } catch (err) {
+
+            alert(
+                err.response?.data?.message ||
+                "Invalid email or password."
+            );
+
+        } finally {
+
+            setLoading(false);
+
+        }
+
+    };
+
+    return (
+
+        <div className="container mt-5">
+
+            <div className="row justify-content-center">
+
+                <div className="col-md-5">
+
+                    <div className="card shadow">
+
+                        <div className="card-body">
+
+                            <h3 className="text-center mb-4">
+                                Login
+                            </h3>
+
+                            <form onSubmit={handleSubmit}>
+
+                                <input
+                                    className="form-control mb-3"
+                                    type="email"
+                                    placeholder="Email"
+                                    value={email}
+                                    onChange={(e) => setEmail(e.target.value)}
+                                    required
+                                />
+
+                                <input
+                                    className="form-control mb-3"
+                                    type="password"
+                                    placeholder="Password"
+                                    value={password}
+                                    onChange={(e) => setPassword(e.target.value)}
+                                    required
+                                />
+
+                                <button
+                                    className="btn btn-primary w-100"
+                                    disabled={loading}
+                                >
+                                    {loading ? "Logging in..." : "Login"}
+                                </button>
+
+                            </form>
+
+                            <p className="text-center mt-3">
+
+                                Don't have an account?
+
+                                <Link to="/register">
+                                    {" "}Register
+                                </Link>
+
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    );
+
 }

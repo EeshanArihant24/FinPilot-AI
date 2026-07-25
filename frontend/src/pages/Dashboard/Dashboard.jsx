@@ -1,18 +1,21 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+
 import Layout from "../../layouts/Layout";
 import DashboardCard from "../../components/Card/DashboardCard";
 import TransactionTable from "../../components/Tables/TransactionTable";
+
+import authService from "../../services/authService";
 import {
   getAccount,
   getTransactions,
 } from "../../services/bankingService";
 
 export default function Dashboard() {
+
   const navigate = useNavigate();
 
-  const ACCOUNT_ID = 1; // Temporary until Login/JWT
-
+  const [user, setUser] = useState(null);
   const [account, setAccount] = useState(null);
   const [transactions, setTransactions] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -23,16 +26,29 @@ export default function Dashboard() {
 
   const loadDashboard = async () => {
     try {
-      const accountData = await getAccount(ACCOUNT_ID);
-      const transactionData = await getTransactions(ACCOUNT_ID);
+
+      const currentUser = await authService.getCurrentUser();
+
+      setUser(currentUser);
+
+      const accountData = await getAccount(currentUser.accountId);
+
+      const transactionData = await getTransactions(
+        currentUser.accountId
+      );
 
       setAccount(accountData);
       setTransactions(transactionData);
+
     } catch (err) {
+
       console.error(err);
       alert("Unable to load dashboard.");
+
     } finally {
+
       setLoading(false);
+
     }
   };
 
@@ -46,20 +62,22 @@ export default function Dashboard() {
 
   return (
     <Layout>
+
       <h1 className="text-4xl font-bold mb-8">
-        Welcome {account?.name} 👋
+        Welcome {user?.name} 👋
       </h1>
 
       <div className="grid md:grid-cols-3 gap-6">
+
         <DashboardCard
           title="Current Balance"
-          value={`$${account?.balance ?? 0}`}
+          value={`₹${account?.balance ?? 0}`}
           color="bg-blue-600"
         />
 
         <DashboardCard
           title="Account Number"
-          value={account?.id}
+          value={account?.accountNumber}
           color="bg-green-600"
         />
 
@@ -68,6 +86,7 @@ export default function Dashboard() {
           value={transactions.length}
           color="bg-red-600"
         />
+
       </div>
 
       <h2 className="text-3xl font-bold mt-12 mb-6">
@@ -75,6 +94,7 @@ export default function Dashboard() {
       </h2>
 
       <div className="grid md:grid-cols-3 lg:grid-cols-4 gap-6">
+
         <button
           onClick={() => navigate("/wallet")}
           className="bg-white shadow rounded-xl p-6 hover:bg-blue-100"
@@ -130,6 +150,7 @@ export default function Dashboard() {
         >
           Profile
         </button>
+
       </div>
 
       <h2 className="text-3xl font-bold mt-12 mb-6">
@@ -137,6 +158,7 @@ export default function Dashboard() {
       </h2>
 
       <TransactionTable transactions={transactions} />
+
     </Layout>
   );
 }

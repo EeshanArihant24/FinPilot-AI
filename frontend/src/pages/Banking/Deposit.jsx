@@ -2,11 +2,10 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Layout from "../../layouts/Layout";
 import { depositMoney } from "../../services/bankingService";
+import authService from "../../services/authService";
 
 export default function Deposit() {
   const navigate = useNavigate();
-
-  const ACCOUNT_ID = 1; // Temporary until Login/JWT
 
   const [amount, setAmount] = useState("");
   const [description, setDescription] = useState("");
@@ -27,8 +26,10 @@ export default function Deposit() {
     setMessage("");
 
     try {
+      const user = await authService.getCurrentUser();
+
       await depositMoney({
-        accountId: ACCOUNT_ID,
+        accountId: user.accountId,
         amount: Number(amount),
         description,
       });
@@ -41,10 +42,11 @@ export default function Deposit() {
       setTimeout(() => {
         navigate("/wallet");
       }, 1500);
+
     } catch (err) {
       setError(
         err.response?.data?.message ||
-          "Unable to complete deposit."
+        "Unable to complete deposit."
       );
     } finally {
       setLoading(false);
