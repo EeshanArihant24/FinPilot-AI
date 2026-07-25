@@ -3,15 +3,18 @@ package com.finpilot.banking.service.impl;
 import com.finpilot.banking.entity.Account;
 import com.finpilot.banking.repository.AccountRepository;
 import com.finpilot.banking.service.AccountService;
-
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.math.BigDecimal;
 
 @Service
 public class AccountServiceImpl implements AccountService {
 
-    @Autowired
-    private AccountRepository accountRepository;
+    private final AccountRepository accountRepository;
+
+    public AccountServiceImpl(AccountRepository accountRepository) {
+        this.accountRepository = accountRepository;
+    }
 
     @Override
     public Account createAccount(Account account) {
@@ -24,7 +27,7 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public Double getBalance(Long id) {
+    public BigDecimal getBalance(Long id) {
         Account account = accountRepository.findById(id).orElse(null);
 
         if (account == null) {
