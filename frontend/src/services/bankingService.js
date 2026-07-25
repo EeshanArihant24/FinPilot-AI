@@ -1,63 +1,48 @@
 import api from "./api";
 
-const BANK = "/banking";
-
-// Account
-
-export const getAccount = async () => {
-  const response = await api.get(`${BANK}/account`);
+// Accounts
+export const getAccounts = async () => {
+  const response = await api.get("/accounts");
   return response.data;
 };
 
-// Deposit
-
-export const depositMoney = async (data) => {
-  const response = await api.post(
-    `${BANK}/deposit`,
-    data
-  );
-
+export const getAccount = async (id) => {
+  const response = await api.get(`/accounts/${id}`);
   return response.data;
 };
 
-// Withdraw
-
-export const withdrawMoney = async (data) => {
-  const response = await api.post(
-    `${BANK}/withdraw`,
-    data
-  );
-
+export const createAccount = async (data) => {
+  const response = await api.post("/accounts", data);
   return response.data;
 };
 
-// Transfer
+export const updateAccount = async (id, data) => {
+  const response = await api.put(`/accounts/${id}`, data);
+  return response.data;
+};
 
-export const transferMoney = async (data) => {
-  const response = await api.post(
-    `${BANK}/transfer`,
-    data
-  );
-
+export const deleteAccount = async (id) => {
+  const response = await api.delete(`/accounts/${id}`);
   return response.data;
 };
 
 // Transactions
-
-export const getTransactions = async () => {
-  const response = await api.get(
-    `${BANK}/transactions`
-  );
-
+export const depositMoney = async (data) => {
+  const response = await api.post("/transactions/deposit", data);
   return response.data;
 };
 
-// Balance
+export const withdrawMoney = async (data) => {
+  const response = await api.post("/transactions/withdraw", data);
+  return response.data;
+};
 
-export const getBalance = async () => {
-  const response = await api.get(
-    `${BANK}/balance`
-  );
+export const transferMoney = async (data) => {
+  const response = await api.post("/transactions/transfer", data);
+  return response.data;
+};
 
+export const getTransactions = async (accountId) => {
+  const response = await api.get(`/transactions/account/${accountId}`);
   return response.data;
 };

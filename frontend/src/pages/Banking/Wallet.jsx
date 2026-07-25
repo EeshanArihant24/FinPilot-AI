@@ -1,39 +1,102 @@
-export default function Wallet(){
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import Layout from "../../layouts/Layout";
+import { getAccount } from "../../services/bankingService";
 
-return(
+export default function Wallet() {
+  const navigate = useNavigate();
 
-<div className="p-8">
+  const ACCOUNT_ID = 1; // Temporary until Login/JWT
 
-<h1 className="text-3xl font-bold mb-6">
+  const [account, setAccount] = useState(null);
+  const [loading, setLoading] = useState(true);
 
-Wallet
+  useEffect(() => {
+    loadWallet();
+  }, []);
 
-</h1>
+  const loadWallet = async () => {
+    try {
+      const data = await getAccount(ACCOUNT_ID);
+      setAccount(data);
+    } catch (error) {
+      console.error(error);
+      alert("Unable to load wallet.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
-<div className="bg-white rounded-xl shadow p-6 w-96">
+  if (loading) {
+    return (
+      <Layout>
+        <h2 className="text-2xl font-bold">Loading...</h2>
+      </Layout>
+    );
+  }
 
-<h2 className="text-xl">
+  return (
+    <Layout>
+      <h1 className="text-3xl font-bold mb-8">
+        My Wallet
+      </h1>
 
-Current Balance
+      <div className="bg-white rounded-xl shadow-lg p-8 max-w-lg">
 
-</h2>
+        <div className="mb-6">
+          <h2 className="text-gray-500">Account Holder</h2>
+          <p className="text-xl font-semibold">
+            {account?.name}
+          </p>
+        </div>
 
-<p className="text-4xl mt-3 font-bold text-blue-600">
+        <div className="mb-6">
+          <h2 className="text-gray-500">Email</h2>
+          <p>{account?.email}</p>
+        </div>
 
-$12,450
+        <div className="mb-6">
+          <h2 className="text-gray-500">Phone</h2>
+          <p>{account?.phone}</p>
+        </div>
 
-</p>
+        <div className="mb-6">
+          <h2 className="text-gray-500">Account ID</h2>
+          <p>{account?.id}</p>
+        </div>
 
-<button className="mt-6 bg-green-600 text-white px-6 py-3 rounded">
+        <div className="mb-8">
+          <h2 className="text-gray-500">Current Balance</h2>
+          <p className="text-4xl font-bold text-blue-600">
+            ${account?.balance ?? 0}
+          </p>
+        </div>
 
-Deposit
+        <div className="flex gap-4">
 
-</button>
+          <button
+            onClick={() => navigate("/deposit")}
+            className="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg"
+          >
+            Deposit
+          </button>
 
-</div>
+          <button
+            onClick={() => navigate("/withdraw")}
+            className="bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded-lg"
+          >
+            Withdraw
+          </button>
 
-</div>
+          <button
+            onClick={() => navigate("/transfer")}
+            className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg"
+          >
+            Transfer
+          </button>
 
-);
-
+        </div>
+      </div>
+    </Layout>
+  );
 }

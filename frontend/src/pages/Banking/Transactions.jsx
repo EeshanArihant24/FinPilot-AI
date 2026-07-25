@@ -1,67 +1,115 @@
-const transactions=[
+import { useEffect, useState } from "react";
+import Layout from "../../layouts/Layout";
+import { getTransactions } from "../../services/bankingService";
 
-{name:"John",amount:"$200",status:"Completed"},
+export default function Transactions() {
+  const ACCOUNT_ID = 1; // Temporary until JWT Login
 
-{name:"Alice",amount:"$450",status:"Completed"},
+  const [transactions, setTransactions] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-{name:"Bob",amount:"$120",status:"Pending"}
+  useEffect(() => {
+    loadTransactions();
+  }, []);
 
-];
+  const loadTransactions = async () => {
+    try {
+      const data = await getTransactions(ACCOUNT_ID);
+      setTransactions(data);
+    } catch (error) {
+      console.error(error);
+      alert("Unable to load transactions.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
-export default function Transactions(){
+  if (loading) {
+    return (
+      <Layout>
+        <h2 className="text-2xl font-bold">Loading...</h2>
+      </Layout>
+    );
+  }
 
-return(
+  return (
+    <Layout>
+      <div className="p-8">
 
-<div className="p-8">
+        <h1 className="text-3xl font-bold mb-6">
+          Transaction History
+        </h1>
 
-<h1 className="text-3xl font-bold mb-6">
+        <div className="bg-white rounded-xl shadow-lg overflow-x-auto">
 
-Transactions
+          <table className="w-full">
 
-</h1>
+            <thead className="bg-blue-600 text-white">
 
-<table className="w-full bg-white shadow rounded-lg">
+              <tr>
+                <th className="p-4">Transaction ID</th>
+                <th className="p-4">Type</th>
+                <th className="p-4">Amount</th>
+                <th className="p-4">Description</th>
+                <th className="p-4">Date</th>
+              </tr>
 
-<thead>
+            </thead>
 
-<tr className="bg-blue-600 text-white">
+            <tbody>
 
-<th>Name</th>
+              {transactions.length === 0 ? (
 
-<th>Amount</th>
+                <tr>
+                  <td
+                    colSpan="5"
+                    className="text-center p-6"
+                  >
+                    No transactions found.
+                  </td>
+                </tr>
 
-<th>Status</th>
+              ) : (
 
-</tr>
+                transactions.map((transaction) => (
 
-</thead>
+                  <tr
+                    key={transaction.id}
+                    className="border-b text-center hover:bg-gray-100"
+                  >
+                    <td className="p-4">
+                      {transaction.id}
+                    </td>
 
-<tbody>
+                    <td className="p-4">
+                      {transaction.type}
+                    </td>
 
-{
+                    <td className="p-4 font-semibold">
+                      ${transaction.amount}
+                    </td>
 
-transactions.map((t,index)=>(
+                    <td className="p-4">
+                      {transaction.description}
+                    </td>
 
-<tr key={index} className="text-center border">
+                    <td className="p-4">
+                      {transaction.transactionDate}
+                    </td>
 
-<td>{t.name}</td>
+                  </tr>
 
-<td>{t.amount}</td>
+                ))
 
-<td>{t.status}</td>
+              )}
 
-</tr>
+            </tbody>
 
-))
+          </table>
 
-}
+        </div>
 
-</tbody>
-
-</table>
-
-</div>
-
-);
-
+      </div>
+    </Layout>
+  );
 }
