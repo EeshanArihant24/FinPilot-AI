@@ -1,5 +1,5 @@
-import Navbar from "../components/Navbar/Navbar";
-import Sidebar from "../components/Sidebar/Sidebar";
+import Sidebar from "../Sidebar/Sidebar";
+import Navbar from "../Navbar/Navbar";
 
 export default function MainLayout({children}){
 
@@ -9,11 +9,11 @@ return(
 
 <Sidebar/>
 
-<div className="flex-1 ml-60">
+<div className="flex-1 bg-slate-100 min-h-screen">
 
 <Navbar/>
 
-<div className="p-8">
+<div className="p-6">
 
 {children}
 

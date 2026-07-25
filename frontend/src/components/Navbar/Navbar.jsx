@@ -1,28 +1,26 @@
 import { FaBell, FaUserCircle } from "react-icons/fa";
 
-export default function Navbar(){
+export default function Navbar() {
+  return (
+    <nav className="bg-white shadow-md px-8 py-4 flex justify-between items-center">
 
-return(
+      <div>
+        <h1 className="text-2xl font-bold text-gray-700">
+          Dashboard
+        </h1>
+      </div>
 
-<div className="bg-white shadow flex justify-between items-center px-8 py-4">
+      <div className="flex gap-6 items-center">
 
-<h1 className="text-2xl font-bold text-blue-600">
+        <FaBell className="text-xl cursor-pointer" />
 
-FinPilot AI
+        <div className="flex items-center gap-2">
+          <FaUserCircle className="text-3xl" />
+          <span>Welcome User</span>
+        </div>
 
-</h1>
+      </div>
 
-<div className="flex items-center gap-6">
-
-<FaBell size={22}/>
-
-<FaUserCircle size={30}/>
-
-</div>
-
-</div>
-
-)
-
+    </nav>
+  );
 }
-
