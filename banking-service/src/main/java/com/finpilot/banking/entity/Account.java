@@ -1,7 +1,10 @@
 package com.finpilot.banking.entity;
 
 import jakarta.persistence.*;
+
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Table(name = "accounts")
@@ -11,32 +14,44 @@ public class Account {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(unique = true)
+    @Column(unique = true, nullable = false)
     private String accountNumber;
 
-    private Double balance;
+    @Column(nullable = false)
+    private BigDecimal balance;
 
+    @Column(nullable = false)
     private String accountType;
 
+    @Column(nullable = false)
     private Long userId;
 
+    @Column(nullable = false)
     private LocalDateTime createdAt;
 
-    // Default constructor (Required by JPA)
+    @OneToMany(mappedBy = "account",
+            cascade = CascadeType.ALL,
+            fetch = FetchType.LAZY)
+    private List<Transaction> transactions;
+
     public Account() {
     }
 
-    // Parameterized constructor
-    public Account(String accountNumber, Double balance, String accountType,
-                   Long userId, LocalDateTime createdAt) {
+    public Account(String accountNumber,
+                   BigDecimal balance,
+                   String accountType,
+                   Long userId) {
+
         this.accountNumber = accountNumber;
         this.balance = balance;
         this.accountType = accountType;
         this.userId = userId;
-        this.createdAt = createdAt;
     }
 
-    // Getters
+    @PrePersist
+    public void onCreate() {
+        createdAt = LocalDateTime.now();
+    }
 
     public Long getId() {
         return id;
@@ -46,7 +61,7 @@ public class Account {
         return accountNumber;
     }
 
-    public Double getBalance() {
+    public BigDecimal getBalance() {
         return balance;
     }
 
@@ -62,7 +77,9 @@ public class Account {
         return createdAt;
     }
 
-    // Setters
+    public List<Transaction> getTransactions() {
+        return transactions;
+    }
 
     public void setId(Long id) {
         this.id = id;
@@ -72,7 +89,7 @@ public class Account {
         this.accountNumber = accountNumber;
     }
 
-    public void setBalance(Double balance) {
+    public void setBalance(BigDecimal balance) {
         this.balance = balance;
     }
 
@@ -86,5 +103,9 @@ public class Account {
 
     public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
+    }
+
+    public void setTransactions(List<Transaction> transactions) {
+        this.transactions = transactions;
     }
 }
