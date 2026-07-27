@@ -22,16 +22,8 @@ export default function AppRoutes() {
 
                 <Route path="/login" element={<Login />} />
 
-                <Route path="/register" element={<Register />} />
-
-                <Route
-                    path="/"
-                    element={
-                        <PrivateRoute>
-                            <Dashboard />
-                        </PrivateRoute>
-                    }
-                />
+                 <Route path="/register" element={<Register />} />
+      <Route path="/dashboard" element={<Dashboard />} />
 
                 <Route
                     path="/wallet"
