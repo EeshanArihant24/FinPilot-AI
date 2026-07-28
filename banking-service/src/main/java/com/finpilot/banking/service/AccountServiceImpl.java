@@ -1,14 +1,15 @@
-package com.finpilot.banking.service.impl;
+package com.finpilot.banking.service;
 
+import com.finpilot.banking.dto.DashboardResponse;
+import com.finpilot.banking.dto.TransactionResponse;
 import com.finpilot.banking.entity.Account;
+import com.finpilot.banking.entity.User;
 import com.finpilot.banking.repository.AccountRepository;
-import com.finpilot.banking.service.AccountService;
-
+import com.finpilot.banking.repository.TransactionRepository;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-
-import com.finpilot.banking.repository.TransactionRepository;
+import java.util.List;
 
 @Service
 public class AccountServiceImpl implements AccountService {
@@ -60,9 +61,7 @@ public DashboardResponse getDashboard(User user) {
     this.transactionRepository = transactionRepository;
 }
 
-    public AccountServiceImpl(AccountRepository accountRepository) {
-        this.accountRepository = accountRepository;
-    }
+  
 
     @Override
     public Account createAccount(Account account) {

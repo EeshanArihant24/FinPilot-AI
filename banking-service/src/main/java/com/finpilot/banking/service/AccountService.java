@@ -1,5 +1,8 @@
-import com.finpilot.banking.dto.DashboardResponse;
-import com.finpilot.banking.entity.User;
+package com.finpilot.banking.service;
+
+import com.finpilot.banking.entity.*;
+import com.finpilot.banking.dto.*;
+import java.math.BigDecimal;
 
 public interface AccountService {
 
@@ -10,4 +13,4 @@ public interface AccountService {
     BigDecimal getBalance(Long id);
 
     DashboardResponse getDashboard(User user);
-}   
+}
