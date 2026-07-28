@@ -2,11 +2,10 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Layout from "../../layouts/Layout";
 import { withdrawMoney } from "../../services/bankingService";
+import authService from "../../services/authService";
 
 export default function Withdraw() {
   const navigate = useNavigate();
-
-  const ACCOUNT_ID = 1; // Temporary until JWT Login
 
   const [amount, setAmount] = useState("");
   const [description, setDescription] = useState("");
@@ -27,8 +26,10 @@ export default function Withdraw() {
     setMessage("");
 
     try {
+      const user = await authService.getCurrentUser();
+
       await withdrawMoney({
-        accountId: ACCOUNT_ID,
+        accountId: user.accountId,
         amount: Number(amount),
         description,
       });
@@ -41,6 +42,7 @@ export default function Withdraw() {
       setTimeout(() => {
         navigate("/wallet");
       }, 1500);
+
     } catch (err) {
       setError(
         err.response?.data?.message ||
@@ -54,11 +56,13 @@ export default function Withdraw() {
   return (
     <Layout>
       <div className="max-w-xl mx-auto bg-white rounded-xl shadow-lg p-8">
+
         <h1 className="text-3xl font-bold mb-8">
           Withdraw Money
         </h1>
 
         <form onSubmit={handleWithdraw}>
+
           <input
             type="number"
             placeholder="Enter Amount"
@@ -95,7 +99,9 @@ export default function Withdraw() {
           >
             {loading ? "Processing..." : "Withdraw"}
           </button>
+
         </form>
+
       </div>
     </Layout>
   );

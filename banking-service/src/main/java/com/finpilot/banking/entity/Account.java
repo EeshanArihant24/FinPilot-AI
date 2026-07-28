@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -23,16 +24,17 @@ public class Account {
     @Column(nullable = false)
     private String accountType;
 
-    @Column(nullable = false)
-    private Long userId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
     @Column(nullable = false)
     private LocalDateTime createdAt;
 
     @OneToMany(mappedBy = "account",
             cascade = CascadeType.ALL,
-            fetch = FetchType.LAZY)
-    private List<Transaction> transactions;
+            orphanRemoval = true)
+    private List<Transaction> transactions = new ArrayList<>();
 
     public Account() {
     }
@@ -40,12 +42,12 @@ public class Account {
     public Account(String accountNumber,
                    BigDecimal balance,
                    String accountType,
-                   Long userId) {
+                   User user) {
 
         this.accountNumber = accountNumber;
         this.balance = balance;
         this.accountType = accountType;
-        this.userId = userId;
+        this.user = user;
     }
 
     @PrePersist
@@ -69,8 +71,8 @@ public class Account {
         return accountType;
     }
 
-    public Long getUserId() {
-        return userId;
+    public User getUser() {
+        return user;
     }
 
     public LocalDateTime getCreatedAt() {
@@ -97,8 +99,8 @@ public class Account {
         this.accountType = accountType;
     }
 
-    public void setUserId(Long userId) {
-        this.userId = userId;
+    public void setUser(User user) {
+        this.user = user;
     }
 
     public void setCreatedAt(LocalDateTime createdAt) {

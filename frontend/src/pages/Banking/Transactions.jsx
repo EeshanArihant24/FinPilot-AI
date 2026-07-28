@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import Layout from "../../layouts/Layout";
+import authService from "../../services/authService";
 import { getTransactions } from "../../services/bankingService";
 
 export default function Transactions() {
-  const ACCOUNT_ID = 1; // Temporary until JWT Login
 
   const [transactions, setTransactions] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -14,13 +14,22 @@ export default function Transactions() {
 
   const loadTransactions = async () => {
     try {
-      const data = await getTransactions(ACCOUNT_ID);
+
+      const user = await authService.getCurrentUser();
+
+      const data = await getTransactions(user.accountId);
+
       setTransactions(data);
+
     } catch (error) {
+
       console.error(error);
       alert("Unable to load transactions.");
+
     } finally {
+
       setLoading(false);
+
     }
   };
 
@@ -77,16 +86,17 @@ export default function Transactions() {
                     key={transaction.id}
                     className="border-b text-center hover:bg-gray-100"
                   >
+
                     <td className="p-4">
                       {transaction.id}
                     </td>
 
                     <td className="p-4">
-                      {transaction.type}
+                      {transaction.transactionType}
                     </td>
 
                     <td className="p-4 font-semibold">
-                      ${transaction.amount}
+                      ₹{transaction.amount}
                     </td>
 
                     <td className="p-4">
@@ -94,7 +104,7 @@ export default function Transactions() {
                     </td>
 
                     <td className="p-4">
-                      {transaction.transactionDate}
+                      {new Date(transaction.createdAt).toLocaleString()}
                     </td>
 
                   </tr>

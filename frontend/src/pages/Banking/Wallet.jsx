@@ -1,14 +1,14 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Layout from "../../layouts/Layout";
+import authService from "../../services/authService";
 import { getAccount } from "../../services/bankingService";
 
 export default function Wallet() {
   const navigate = useNavigate();
 
-  const ACCOUNT_ID = 1; // Temporary until Login/JWT
-
   const [account, setAccount] = useState(null);
+  const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -17,7 +17,12 @@ export default function Wallet() {
 
   const loadWallet = async () => {
     try {
-      const data = await getAccount(ACCOUNT_ID);
+      const currentUser = await authService.getCurrentUser();
+
+      setUser(currentUser);
+
+      const data = await getAccount(currentUser.accountId);
+
       setAccount(data);
     } catch (error) {
       console.error(error);
@@ -46,29 +51,29 @@ export default function Wallet() {
         <div className="mb-6">
           <h2 className="text-gray-500">Account Holder</h2>
           <p className="text-xl font-semibold">
-            {account?.name}
+            {user?.name}
           </p>
         </div>
 
         <div className="mb-6">
           <h2 className="text-gray-500">Email</h2>
-          <p>{account?.email}</p>
+          <p>{user?.email}</p>
         </div>
 
         <div className="mb-6">
           <h2 className="text-gray-500">Phone</h2>
-          <p>{account?.phone}</p>
+          <p>{user?.phone}</p>
         </div>
 
         <div className="mb-6">
-          <h2 className="text-gray-500">Account ID</h2>
-          <p>{account?.id}</p>
+          <h2 className="text-gray-500">Account Number</h2>
+          <p>{account?.accountNumber}</p>
         </div>
 
         <div className="mb-8">
           <h2 className="text-gray-500">Current Balance</h2>
           <p className="text-4xl font-bold text-blue-600">
-            ${account?.balance ?? 0}
+            ₹{account?.balance ?? 0}
           </p>
         </div>
 
@@ -96,6 +101,7 @@ export default function Wallet() {
           </button>
 
         </div>
+
       </div>
     </Layout>
   );

@@ -2,11 +2,10 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Layout from "../../layouts/Layout";
 import { transferMoney } from "../../services/bankingService";
+import authService from "../../services/authService";
 
 export default function Transfer() {
   const navigate = useNavigate();
-
-  const ACCOUNT_ID = 1; // Temporary until JWT Login
 
   const [receiverId, setReceiverId] = useState("");
   const [amount, setAmount] = useState("");
@@ -24,13 +23,20 @@ export default function Transfer() {
       return;
     }
 
+    if (Number(amount) <= 0) {
+      setError("Please enter a valid amount.");
+      return;
+    }
+
     setLoading(true);
     setError("");
     setMessage("");
 
     try {
+      const user = await authService.getCurrentUser();
+
       await transferMoney({
-        fromAccountId: ACCOUNT_ID,
+        fromAccountId: user.accountId,
         toAccountId: Number(receiverId),
         amount: Number(amount),
         description,
@@ -45,10 +51,11 @@ export default function Transfer() {
       setTimeout(() => {
         navigate("/wallet");
       }, 1500);
+
     } catch (err) {
       setError(
         err.response?.data?.message ||
-          "Transfer failed."
+        "Transfer failed."
       );
     } finally {
       setLoading(false);
