@@ -1,98 +1,121 @@
 import { useState } from "react";
+import Layout from "../../layouts/Layout";
+import axios from "axios";
 
 export default function FraudDetection() {
 
-    const [result,setResult]=useState(null);
+  const [amount, setAmount] = useState("");
+  const [category, setCategory] = useState("Shopping");
+  const [location, setLocation] = useState("");
 
-    const predict=()=>{
+  const [loading, setLoading] = useState(false);
 
-        setResult({
-            prediction:"SAFE",
-            confidence:"96.8%"
-        });
+  const [result, setResult] = useState(null);
+
+  const predict = async () => {
+
+    try {
+
+      setLoading(true);
+
+      /*
+       Replace this URL with your FastAPI endpoint
+
+       Example:
+       http://localhost:8000/predict
+      */
+
+      const response = await axios.post(
+        "http://localhost:8000/predict",
+        {
+          amount: Number(amount),
+          category,
+          location,
+        }
+      );
+
+      setResult(response.data);
+
+    } catch (err) {
+
+      console.error(err);
+
+      alert("Prediction service unavailable.");
+
+    } finally {
+
+      setLoading(false);
 
     }
 
-    return(
+  };
 
-<div className="min-h-screen bg-slate-100 flex justify-center items-center">
+  return (
+    <Layout>
 
-<div className="bg-white w-[500px] p-8 rounded-xl shadow-xl">
+      <div className="max-w-xl mx-auto bg-white rounded-xl shadow-lg p-8">
 
-<h1 className="text-3xl font-bold mb-6">
+        <h1 className="text-3xl font-bold mb-8">
+          AI Fraud Detection
+        </h1>
 
-AI Fraud Detection
+        <input
+          type="number"
+          placeholder="Amount"
+          value={amount}
+          onChange={(e) => setAmount(e.target.value)}
+          className="w-full border rounded-lg p-3 mb-5"
+        />
 
-</h1>
+        <select
+          value={category}
+          onChange={(e) => setCategory(e.target.value)}
+          className="w-full border rounded-lg p-3 mb-5"
+        >
+          <option>Shopping</option>
+          <option>Transfer</option>
+          <option>Food</option>
+          <option>Bills</option>
+          <option>Travel</option>
+        </select>
 
-<input
-placeholder="Amount"
-className="w-full border rounded-lg p-3 mb-4"
-/>
+        <input
+          placeholder="Location"
+          value={location}
+          onChange={(e) => setLocation(e.target.value)}
+          className="w-full border rounded-lg p-3 mb-5"
+        />
 
-<select
-className="w-full border rounded-lg p-3 mb-4"
->
+        <button
+          onClick={predict}
+          disabled={loading}
+          className="w-full bg-blue-600 hover:bg-blue-700 text-white rounded-lg p-3"
+        >
+          {loading ? "Predicting..." : "Predict"}
+        </button>
 
-<option>Shopping</option>
-<option>Transfer</option>
-<option>Food</option>
+        {result && (
 
-</select>
+          <div className="mt-8 border rounded-xl p-5 bg-gray-50">
 
-<input
-placeholder="Location"
-className="w-full border rounded-lg p-3 mb-4"
-/>
+            <h2 className="text-xl font-bold mb-3">
+              Prediction Result
+            </h2>
 
-<button
+            <p className="text-lg">
+              <strong>Status:</strong> {result.prediction}
+            </p>
 
-onClick={predict}
+            <p className="text-lg">
+              <strong>Confidence:</strong> {result.confidence}
+            </p>
 
-className="w-full bg-blue-600 hover:bg-blue-700 text-white rounded-lg p-3"
+          </div>
 
->
+        )}
 
-Predict
+      </div>
 
-</button>
-
-{
-
-result && (
-
-<div className="mt-6">
-
-<h2 className="text-xl font-bold">
-
-Prediction
-
-</h2>
-
-<p className="text-green-600 text-2xl">
-
-{result.prediction}
-
-</p>
-
-<p>
-
-Confidence :
-
-{result.confidence}
-
-</p>
-
-</div>
-
-)
-
-}
-
-</div>
-
-</div>
-
-    );
-
+    </Layout>
+  );
 }

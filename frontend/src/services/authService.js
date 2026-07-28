@@ -1,46 +1,20 @@
 import api from "./api";
+import { API } from "../api/endpoints";
 
 const authService = {
 
-    register: async (userData) => {
-        const response = await api.post("/auth/register", userData);
+  login(data) {
+    return api.post(API.LOGIN, data);
+  },
 
-        if (response.data.token) {
-            localStorage.setItem("token", response.data.token);
-        }
+  register(data) {
+    return api.post(API.REGISTER, data);
+  },
 
-        return response.data;
-    },
+  getCurrentUser() {
+    return api.get(API.ME);
+  }
 
-    login: async (email, password) => {
-        const response = await api.post("/auth/login", {
-            email,
-            password,
-        });
-
-        if (response.data.token) {
-            localStorage.setItem("token", response.data.token);
-        }
-
-        return response.data;
-    },
-
-    getCurrentUser: async () => {
-        const response = await api.get("/auth/me");
-        return response.data;
-    },
-
-    logout: () => {
-        localStorage.removeItem("token");
-    },
-
-    isLoggedIn: () => {
-        return localStorage.getItem("token") !== null;
-    },
-
-    getToken: () => {
-        return localStorage.getItem("token");
-    },
 };
 
 export default authService;

@@ -26,7 +26,7 @@ export default function Withdraw() {
     setMessage("");
 
     try {
-      const user = await authService.getCurrentUser();
+      const user = (await authService.getCurrentUser()).data;
 
       await withdrawMoney({
         accountId: user.accountId,

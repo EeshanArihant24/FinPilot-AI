@@ -33,7 +33,7 @@ export default function Transfer() {
     setMessage("");
 
     try {
-      const user = await authService.getCurrentUser();
+      const user = (await authService.getCurrentUser()).data;
 
       await transferMoney({
         fromAccountId: user.accountId,

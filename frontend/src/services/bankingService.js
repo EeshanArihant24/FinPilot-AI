@@ -1,48 +1,39 @@
-import api from "./api";
+import accountService from "./accountService";
+import transactionService from "./transactionService";
 
-// Accounts
-export const getAccounts = async () => {
-  const response = await api.get("/accounts");
-  return response.data;
+const bankingService = {
+
+  getAccount(id) {
+    return accountService.getAccount(id);
+  },
+
+  getBalance(id) {
+    return accountService.getBalance(id);
+  },
+
+  depositMoney(data) {
+    return transactionService.depositMoney(data);
+  },
+
+  withdrawMoney(data) {
+    return transactionService.withdrawMoney(data);
+  },
+
+  transferMoney(data) {
+    return transactionService.transferMoney(data);
+  },
+
+  getTransactions(accountId) {
+    return transactionService.getTransactions(accountId);
+  }
+
 };
 
-export const getAccount = async (id) => {
-  const response = await api.get(`/accounts/${id}`);
-  return response.data;
-};
+export const getAccount = bankingService.getAccount;
+export const getBalance = bankingService.getBalance;
+export const depositMoney = bankingService.depositMoney;
+export const withdrawMoney = bankingService.withdrawMoney;
+export const transferMoney = bankingService.transferMoney;
+export const getTransactions = bankingService.getTransactions;
 
-export const createAccount = async (data) => {
-  const response = await api.post("/accounts", data);
-  return response.data;
-};
-
-export const updateAccount = async (id, data) => {
-  const response = await api.put(`/accounts/${id}`, data);
-  return response.data;
-};
-
-export const deleteAccount = async (id) => {
-  const response = await api.delete(`/accounts/${id}`);
-  return response.data;
-};
-
-// Transactions
-export const depositMoney = async (data) => {
-  const response = await api.post("/transactions/deposit", data);
-  return response.data;
-};
-
-export const withdrawMoney = async (data) => {
-  const response = await api.post("/transactions/withdraw", data);
-  return response.data;
-};
-
-export const transferMoney = async (data) => {
-  const response = await api.post("/transactions/transfer", data);
-  return response.data;
-};
-
-export const getTransactions = async (accountId) => {
-  const response = await api.get(`/transactions/account/${accountId}`);
-  return response.data;
-};
+export default bankingService;
