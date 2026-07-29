@@ -15,11 +15,11 @@ export default function Transactions() {
   const loadTransactions = async () => {
     try {
 
-      const user = await authService.getCurrentUser();
+      const user = (await authService.getCurrentUser()).data;
 
-      const data = await getTransactions(user.accountId);
+const response = await getTransactions(user.accountId);
 
-      setTransactions(data);
+setTransactions(response.data);
 
     } catch (error) {
 

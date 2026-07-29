@@ -26,7 +26,7 @@ export default function Deposit() {
     setMessage("");
 
     try {
-      const user = await authService.getCurrentUser();
+     const user = (await authService.getCurrentUser()).data;
 
       await depositMoney({
         accountId: user.accountId,

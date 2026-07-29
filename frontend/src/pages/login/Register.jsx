@@ -3,147 +3,132 @@ import { Link, useNavigate } from "react-router-dom";
 import authService from "../../services/authService";
 
 export default function Register() {
+  const navigate = useNavigate();
 
-    const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
 
-    const [loading, setLoading] = useState(false);
+  const [form, setForm] = useState({
+    name: "",
+    email: "",
+    password: "",
+  });
 
-    const [form, setForm] = useState({
-        name: "",
-        email: "",
-        password: "",
-        phone: "",
-        accountType: "SAVINGS",
-        initialBalance: 0,
+  const handleChange = (e) => {
+    setForm({
+      ...form,
+      [e.target.name]: e.target.value,
     });
+  };
 
-    const handleChange = (e) => {
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
-        setForm({
-            ...form,
-            [e.target.name]: e.target.value,
-        });
+    try {
+      setLoading(true);
 
-    };
+      const payload = {
+        ...form,
+        phone: "9876543210",
+        accountType: "SAVINGS",
+        initialBalance: 2000,
+      };
 
-    const handleSubmit = async (e) => {
+      await authService.register(payload);
 
-        e.preventDefault();
+      alert("Registration Successful!");
 
-        try {
+      navigate("/login");
+    } catch (err) {
+      console.error(err);
 
-            setLoading(true);
+      alert(
+        err.response?.data?.message ||
+        "Registration failed."
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
 
-            await authService.register(form);
+  return (
+    <div className="relative min-h-screen overflow-hidden bg-slate-950">
+      <div className="absolute inset-0 bg-gradient-to-br from-slate-950 via-blue-950 to-cyan-950"></div>
 
-            navigate("/");
+      <div className="absolute top-0 left-0 h-72 w-72 rounded-full bg-cyan-500/20 blur-3xl animate-pulse"></div>
 
-        } catch (err) {
+      <div className="absolute bottom-0 right-0 h-80 w-80 rounded-full bg-indigo-500/20 blur-3xl animate-pulse"></div>
 
-            alert(
-                err.response?.data?.message ||
-                "Registration failed."
-            );
-
-        } finally {
-
-            setLoading(false);
-
-        }
-
-    };
-
-    return (
-
-        <div className="container mt-5">
-
-            <div className="row justify-content-center">
-
-                <div className="col-md-6">
-
-                    <div className="card shadow">
-
-                        <div className="card-body">
-
-                            <h3 className="text-center mb-4">
-                                Register
-                            </h3>
-
-                            <form onSubmit={handleSubmit}>
-
-                                <input
-                                    className="form-control mb-3"
-                                    name="name"
-                                    placeholder="Full Name"
-                                    onChange={handleChange}
-                                    required
-                                />
-
-                                <input
-                                    className="form-control mb-3"
-                                    type="email"
-                                    name="email"
-                                    placeholder="Email"
-                                    onChange={handleChange}
-                                    required
-                                />
-
-                                <input
-                                    className="form-control mb-3"
-                                    name="phone"
-                                    placeholder="Phone"
-                                    onChange={handleChange}
-                                    required
-                                />
-
-                                <input
-                                    className="form-control mb-3"
-                                    type="password"
-                                    name="password"
-                                    placeholder="Password"
-                                    onChange={handleChange}
-                                    required
-                                />
-
-                                <select
-                                    className="form-select mb-3"
-                                    name="accountType"
-                                    value={form.accountType}
-                                    onChange={handleChange}
-                                >
-                                    <option value="SAVINGS">Savings</option>
-                                    <option value="CURRENT">Current</option>
-                                </select>
-
-                                <button
-                                    className="btn btn-success w-100"
-                                    disabled={loading}
-                                >
-                                    {loading ? "Creating Account..." : "Register"}
-                                </button>
-
-                            </form>
-
-                            <p className="text-center mt-3">
-
-                                Already have an account?
-
-                                <Link to="/login">
-                                    {" "}Login
-                                </Link>
-
-                            </p>
-
-                        </div>
-
-                    </div>
-
-                </div>
-
+      <div className="relative z-10 flex min-h-screen items-center justify-center px-6">
+        <div className="w-full max-w-lg rounded-3xl border border-white/10 bg-white/10 p-10 shadow-2xl backdrop-blur-xl">
+          <div className="text-center">
+            <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-gradient-to-r from-cyan-500 to-blue-600">
+              <span className="text-3xl text-white">🏦</span>
             </div>
 
+            <h1 className="text-4xl font-bold text-white">
+              Create Account
+            </h1>
+
+            <p className="mt-2 text-slate-300">
+              Join FinPilot AI Banking
+            </p>
+          </div>
+
+          <form
+            onSubmit={handleSubmit}
+            className="mt-8 space-y-5"
+          >
+            <input
+              type="text"
+              name="name"
+              placeholder="Full Name"
+              value={form.name}
+              onChange={handleChange}
+              required
+              className="w-full rounded-xl border border-white/20 bg-white/10 px-4 py-3 text-white placeholder-slate-400 outline-none focus:border-cyan-400"
+            />
+
+            <input
+              type="email"
+              name="email"
+              placeholder="Email Address"
+              value={form.email}
+              onChange={handleChange}
+              required
+              className="w-full rounded-xl border border-white/20 bg-white/10 px-4 py-3 text-white placeholder-slate-400 outline-none focus:border-cyan-400"
+            />
+
+            <input
+              type="password"
+              name="password"
+              placeholder="Password"
+              value={form.password}
+              onChange={handleChange}
+              required
+              className="w-full rounded-xl border border-white/20 bg-white/10 px-4 py-3 text-white placeholder-slate-400 outline-none focus:border-cyan-400"
+            />
+
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 py-3 font-semibold text-white transition hover:scale-[1.02]"
+            >
+              {loading ? "Creating Account..." : "Register"}
+            </button>
+          </form>
+
+          <p className="mt-8 text-center text-slate-300">
+            Already have an account?
+
+            <Link
+              to="/login"
+              className="ml-2 font-semibold text-cyan-400 hover:text-cyan-300"
+            >
+              Login
+            </Link>
+          </p>
         </div>
-
-    );
-
+      </div>
+    </div>
+  );
 }

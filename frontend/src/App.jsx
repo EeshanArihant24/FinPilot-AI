@@ -4,6 +4,7 @@ import Register from "./pages/login/Register";
 import Dashboard from "./pages/Dashboard/Dashboard";
 import AppRoutes from "./routes/AppRoutes";
 
+
 export default function App() {
   return <AppRoutes />;
 }

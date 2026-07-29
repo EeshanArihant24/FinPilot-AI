@@ -17,13 +17,13 @@ export default function Wallet() {
 
   const loadWallet = async () => {
     try {
-      const currentUser = await authService.getCurrentUser();
+      const currentUser = (await authService.getCurrentUser()).data;
 
       setUser(currentUser);
 
-      const data = await getAccount(currentUser.accountId);
+      const account = (await getAccount(currentUser.accountId)).data;
 
-      setAccount(data);
+    setAccount(account);
     } catch (error) {
       console.error(error);
       alert("Unable to load wallet.");
