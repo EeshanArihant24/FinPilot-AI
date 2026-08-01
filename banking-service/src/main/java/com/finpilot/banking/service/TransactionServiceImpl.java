@@ -34,11 +34,11 @@ public class TransactionServiceImpl implements TransactionService {
     private AIService aiService;
 
     @Override
-@Transactional
-public TransactionResponse deposit(Long accountId, BigDecimal amount) {
+    @Transactional
+    public TransactionResponse deposit(Long accountId, BigDecimal amount) {
     if (amount.compareTo(BigDecimal.ZERO) <= 0) {
     throw new RuntimeException("Invalid amount");
-}
+    }
 
     Account account = accountRepository.findById(accountId)
             .orElseThrow(() -> new RuntimeException("Account not found"));
@@ -89,82 +89,48 @@ public TransactionResponse withdraw(Long accountId, BigDecimal amount) {
     return map(transaction);
 }
 
-   @Override
+@Override
 @Transactional(rollbackFor = Exception.class)
 public TransactionResponse transfer(Long fromAccountId,
                                     Long toAccountId,
                                     BigDecimal amount) {
 
-    if (amount.compareTo(BigDecimal.ZERO) <= 0) {
-        throw new RuntimeException("Amount must be greater than zero");
-    }
-
-    if (fromAccountId.equals(toAccountId)) {
-        throw new RuntimeException("Cannot transfer to same account");
-    }
+    System.out.println("STEP 1");
 
     Account sender = accountRepository.findById(fromAccountId)
             .orElseThrow(() -> new RuntimeException("Sender not found"));
 
+    System.out.println("STEP 2");
+
     Account receiver = accountRepository.findById(toAccountId)
             .orElseThrow(() -> new RuntimeException("Receiver not found"));
 
-    if (sender.getBalance().compareTo(amount) < 0) {
-        throw new RuntimeException("Insufficient Balance");
-    }
+    System.out.println("STEP 3");
 
-    PredictionRequest request = new PredictionRequest();
-
-    request.setStep(1);
-    request.setType("TRANSFER");
-    request.setAmount(amount.doubleValue());
-
-    request.setOldbalanceOrg(sender.getBalance().doubleValue());
-    request.setNewbalanceOrig(sender.getBalance().subtract(amount).doubleValue());
-
-    request.setOldbalanceDest(receiver.getBalance().doubleValue());
-    request.setNewbalanceDest(receiver.getBalance().add(amount).doubleValue());
-
-    request.setDevice_trusted(1);
-    request.setLocation_match(1);
-    request.setVelocity(1);
-    request.setFailed_login_count(0);
-    request.setIp_risk_score(0.20);
-    request.setAccount_age_days(365);
-    request.setHour(java.time.LocalTime.now().getHour());
-
-    PredictionResponse prediction = aiService.predict(request);
-
-    if (prediction != null && prediction.getPrediction() == 1) {
-        throw new RuntimeException(
-                "Transaction blocked by AI. Fraud Probability: "
-                        + prediction.getFraud_probability());
-    }
+    System.out.println(sender.getBalance());
+    System.out.println(receiver.getBalance());
 
     sender.setBalance(sender.getBalance().subtract(amount));
     receiver.setBalance(receiver.getBalance().add(amount));
 
-    accountRepository.saveAll(List.of(sender, receiver));
+    System.out.println("STEP 4");
 
-    String reference = UUID.randomUUID().toString();
+    accountRepository.save(sender);
+    accountRepository.save(receiver);
+
+    System.out.println("STEP 5");
 
     Transaction debit = new Transaction();
     debit.setAccount(sender);
     debit.setAmount(amount);
-    debit.setDescription("Transfer to " + receiver.getAccountNumber());
+    debit.setDescription("Transfer");
     debit.setTransactionType(TransactionType.TRANSFER_OUT);
     debit.setStatus(TransactionStatus.SUCCESS);
-    debit.setReferenceNumber(reference);
+    debit.setReferenceNumber(UUID.randomUUID().toString());
 
-    Transaction credit = new Transaction();
-    credit.setAccount(receiver);
-    credit.setAmount(amount);
-    credit.setDescription("Transfer from " + sender.getAccountNumber());
-    credit.setTransactionType(TransactionType.TRANSFER_IN);
-    credit.setStatus(TransactionStatus.SUCCESS);
-    credit.setReferenceNumber(reference);
+    transactionRepository.save(debit);
 
-    transactionRepository.saveAll(List.of(debit, credit));
+    System.out.println("STEP 6");
 
     return map(debit);
 }
